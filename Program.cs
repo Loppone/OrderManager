@@ -2,8 +2,7 @@ using GenericService;
 using Microsoft.EntityFrameworkCore;
 using OrderManagerApi;
 using OrderService;
-//using OrderService.Data;
-//using OrderService.Models;
+using OrderService.Models.Business;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Automapper
-builder.Services.AddAutoMapper(typeof(GenericMappingProfile<,>)); // Usa il profilo generico
-builder.Services.AddAutoMapper(typeof(OrderMappingProfile));
+builder.Services.AddAutoMapper(typeof(GenericMappingProfile<,>)); 
+builder.Services.AddAutoMapper(typeof(OrderMappingDtoProfile));
+builder.Services.AddAutoMapper(typeof(OrderMappingBusinessProfile));
 
 // DbContext
 var orderConnectionString = builder.Configuration.GetConnectionString("OrderConnectionString");
@@ -28,7 +28,7 @@ builder
 
 // DI
 builder.Services.AddScoped<IRepository<OrderService.Data.Order>, Repository<OrderService.Data.Order, OrderService.Data.OrderDbContext>>();
-builder.Services.AddScoped<IGenericService<OrderService.Models.Order>, GenericService<OrderService.Models.Order, OrderService.Data.Order>>();
+builder.Services.AddScoped<IGenericService<Order>, GenericService<Order, OrderService.Data.Order>>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, CustomOrderService>();
 

@@ -1,37 +1,52 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-public abstract class GenericController<T> : ControllerBase where T : class
+public abstract class GenericController<TDTO, TBUS> : ControllerBase 
+    where TDTO : class
+    where TBUS : class
 {
-    private readonly IGenericService<T> _service;
+    private readonly IGenericService<TBUS> _service;
+    private readonly IMapper _mapper;
 
-    public GenericController(IGenericService<T> service)
+    public GenericController(IGenericService<TBUS> service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(T entity)
+    public async Task<IActionResult> Create(TDTO entity)
     {
-        var newId = await _service.AddAsync(entity);
+        // Map su Business
+        var businessEntity = _mapper.Map<TBUS>(entity);
+        var newId = await _service.AddAsync(businessEntity);
 
-        return Created($"/api/{typeof(T).Name.ToLower()}s/{newId}", entity);
+        return Created($"/api/{typeof(TDTO).Name.ToLower()}s/{newId}", entity);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, T entity)
+    public async Task<IActionResult> Update(int id, TDTO entity)
     {
         if (id != ((dynamic)entity).Id) return BadRequest();
 
-        await _service.UpdateAsync(entity);
+        var businessEntity = _mapper.Map<TBUS>(entity);
+        await _service.UpdateAsync(businessEntity);
+
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _service.DeleteAsync(id);
-        return NoContent();
+        try
+        {
+            await _service.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }

@@ -28,7 +28,8 @@ namespace OrderManagerApi
 
                 var addresses = new List<Address>()
                 {
-                    new Address { Id = 1, UserId = 1, Street = "Via degli orti", StreetNumber = "11", City = "Mandello del Lario", ZipCode = "23826" }
+                    new Address { Id = 1, UserId = 1, Street = "Via degli orti", StreetNumber = "11", City = "Mandello del Lario", ZipCode = "23826" },
+                    new Address { Id = 2, UserId = 1, Street = "Via delle erbe", StreetNumber = "13", City = "Mandello del Lario", ZipCode = "23826" }
                 };
 
                 ctx.Addresses.AddRange(addresses);
@@ -54,6 +55,7 @@ namespace OrderManagerApi
                 {
                     new Product() { Id = 1, CategoryId = 1, Name = "Racchetta RF 01", Price = 280 },
                     new Product() { Id = 2, CategoryId = 2, Name = "T-Shirt RF", Price = 50 },
+                    new Product() { Id = 3, CategoryId = 2, Name = "Borsone RF Collection", Price = 240 },
                 };
 
                 ctx.Products.AddRange(products);
@@ -64,7 +66,8 @@ namespace OrderManagerApi
 
                 var orders = new List<Order>()
                 {
-                    new Order() { Id = 1, UserId = 1, AddressId = 1, OrderDate = DateTime.Now }
+                    new Order() { Id = 1, UserId = 1, AddressId = 1, OrderDate = DateTime.Now },
+                    new Order() { Id = 2, UserId = 1, AddressId = 1, OrderDate = DateTime.Now }
                 };
 
                 ctx.Orders.AddRange(orders);
@@ -77,6 +80,7 @@ namespace OrderManagerApi
                 {
                     new OrderProduct() { Id = 1, OrderId = 1, ProductId = 1, Quantity = 2 },
                     new OrderProduct() { Id = 2, OrderId = 1, ProductId = 2, Quantity = 1 },
+                    new OrderProduct() { Id = 3, OrderId = 2, ProductId = 3, Quantity = 1 },
                 };
 
                 ctx.OrderProducts.AddRange(ordersProducts);
@@ -87,7 +91,6 @@ namespace OrderManagerApi
 
                 tr.Commit();
             }
-
         }
 
         public class DummyDbContext : DbContext
