@@ -27,8 +27,8 @@ builder
         });
 
 // DI
-builder.Services.AddScoped<IRepository<OrderService.Data.Order>, Repository<OrderService.Data.Order, OrderService.Data.OrderDbContext>>();
-builder.Services.AddScoped<IGenericService<Order>, GenericService<Order, OrderService.Data.Order>>();
+builder.Services.AddScoped<IRepository<OrderService.Models.Data.Order>, Repository<OrderService.Models.Data.Order, OrderService.Data.OrderDbContext>>();
+builder.Services.AddScoped<IGenericService<Order>, GenericService<Order, OrderService.Models.Data.Order>>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, CustomOrderService>();
 
