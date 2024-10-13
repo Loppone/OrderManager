@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using OrderService;
 using BusinessOrder = OrderService.Models.Business.Order;
+using BusinessOrderProduct = OrderService.Models.Business.OrderProduct;
 using DtoOrder = OrderService.Models.Dto.Order;
+using DtoOrderProduct = OrderService.Models.Dto.OrderProduct;
 
 
 namespace OrderManagerApi.Controllers
@@ -11,13 +13,19 @@ namespace OrderManagerApi.Controllers
     [Route("api/orders")]
     public class OrderController : ControllerBase
     {
-        private readonly IGenericService<BusinessOrder> _genericService;
+        private readonly IGenericService<BusinessOrder> _genericServiceOrder;
+        private readonly IGenericService<BusinessOrderProduct> _genericServiceOrderProduct;
         private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
 
-        public OrderController(IGenericService<BusinessOrder> genericService, IOrderService orderService, IMapper mapper)
+        public OrderController(
+            IGenericService<BusinessOrder> genericServiceOrder,
+            IGenericService<BusinessOrderProduct> genericServiceOrderProduct,  
+            IOrderService orderService, 
+            IMapper mapper)
         {
-            _genericService = genericService;
+            _genericServiceOrder = genericServiceOrder;
+            _genericServiceOrderProduct = genericServiceOrderProduct;
             _orderService = orderService;
             _mapper = mapper;
         }
@@ -48,7 +56,7 @@ namespace OrderManagerApi.Controllers
 
             try
             {
-                var newId = await _genericService.AddAsync(businessEntity);
+                var newId = await _genericServiceOrder.AddAsync(businessEntity);
                 return CreatedAtAction(nameof(GetById), new { id = newId }, newId);
             }
             catch (Exception ex)
@@ -60,22 +68,55 @@ namespace OrderManagerApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, DtoOrder entity)
         {
-            var data = await _orderService.GetByIdAsync(id);
+            var order = await _orderService.GetByIdAsync(id);
 
-            if (data == null) return NotFound();
+            if (order == null) return NotFound();
+            
+            var data = _mapper.Map<BusinessOrder>(entity);
+            data.Id = order.Id;
 
-           // var businessEntity = _mapper.Map<BusinessOrder>(entity);
-            await _genericService.UpdateAsync(data);
+            await _genericServiceOrder.UpdateAsync(data);
 
             return NoContent();
         }
 
+        [HttpPost("{id}/add-product")]
+        public async Task<IActionResult> AddProduct(int id, DtoOrderProduct entity)
+        {
+            var businessEntity = _mapper.Map<BusinessOrderProduct>(entity);
+
+            try
+            {
+                var newId = await _genericServiceOrderProduct.AddAsync(businessEntity);
+                return CreatedAtAction(nameof(GetById), new { id = newId }, newId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteOrder(int id)
         {
             try
             {
-                await _genericService.DeleteAsync(id);
+                await _genericServiceOrder.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
+        [HttpDelete("{id}/delete-product")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                await _genericServiceOrderProduct.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)
