@@ -1,31 +1,32 @@
-﻿using AutoMapper;
+﻿using AddressService;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using UserService;
-using BusinessUser = UserService.Models.Business.User;
-using DtoUser = UserService.Models.Dto.User;
+using BusinessAddress = AddressService.Models.Business.Address;
+using DtoAddress = AddressService.Models.Dto.Address;
 
 
 namespace OrderManagerApi.Controllers
 {
     [ApiController]
-    [Route("api/users")]
-    public class UserController : ControllerBase
+    [Route("api/address")]
+    public class AddressController : ControllerBase
     {
-        private readonly IGenericService<BusinessUser> _genericService;
-        private readonly IUserService _userService;
+        private readonly IGenericService<BusinessAddress> _genericService;
+        private readonly IAddressService _addressService;
         private readonly IMapper _mapper;
 
-        public UserController(IGenericService<BusinessUser> genericService, IUserService userService, IMapper mapper)
+        public AddressController(IGenericService<BusinessAddress> genericService, IAddressService addressService, IMapper mapper)
         {
             _genericService = genericService;
-            _userService = userService;
+            _addressService = addressService;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var data = await _userService.GetAllAsync();
+            var data = await _addressService.GetAllAsync();
 
             return Ok(data);
         }
@@ -33,7 +34,7 @@ namespace OrderManagerApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var data = await _userService.GetByIdAsync(id);
+            var data = await _addressService.GetByIdAsync(id);
 
             if (data == null) return NotFound();
 
@@ -41,10 +42,10 @@ namespace OrderManagerApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(DtoUser entity)
+        public async Task<IActionResult> Create(DtoAddress entity)
         {
             // Map su Business
-            var businessEntity = _mapper.Map<BusinessUser>(entity);
+            var businessEntity = _mapper.Map<BusinessAddress>(entity);
 
             try
             {
@@ -57,28 +58,14 @@ namespace OrderManagerApi.Controllers
             }
         }
 
-        [HttpPost("{id}/add-address")]
-        public async Task<IActionResult> AssignAddress(int id, int addressId)
-        {
-            try
-            {
-               await _userService.AssignAddress(id, addressId);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, DtoUser entity)
+        public async Task<IActionResult> Update(int id, DtoAddress entity)
         {
-            var user = await _userService.GetByIdAsync(id);
+            var user = await _addressService.GetByIdAsync(id);
 
             if (user == null) return NotFound();
 
-            var data = _mapper.Map<BusinessUser>(entity);
+            var data = _mapper.Map<BusinessAddress>(entity);
             data.Id = user.Id;
 
             await _genericService.UpdateAsync(data);

@@ -84,6 +84,7 @@ namespace OrderManagerApi.Controllers
         public async Task<IActionResult> AddProduct(int id, DtoOrderProduct entity)
         {
             var businessEntity = _mapper.Map<BusinessOrderProduct>(entity);
+            businessEntity.OrderId = id;
 
             try
             {
@@ -111,12 +112,12 @@ namespace OrderManagerApi.Controllers
         }
 
 
-        [HttpDelete("{id}/delete-product")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        [HttpDelete("delete-product")]
+        public async Task<IActionResult> DeleteProduct(int productId)
         {
             try
             {
-                await _genericServiceOrderProduct.DeleteAsync(id);
+                await _genericServiceOrderProduct.DeleteAsync(productId);
                 return NoContent();
             }
             catch (Exception ex)

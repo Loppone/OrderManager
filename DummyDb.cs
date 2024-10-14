@@ -12,7 +12,7 @@ namespace OrderManagerApi
         {
             var ctx = new DummyDbContext();
 
-            var mustCreateDb = false;
+            var mustCreateDb = true;
             if (mustCreateDb)
             {
                 ctx.Database.EnsureDeleted();
@@ -21,9 +21,10 @@ namespace OrderManagerApi
                 using (var tr = ctx.Database.BeginTransaction())
                 {
                     var users = new List<User>()
-                {
-                    new User() { Id = 1, Name = "Max", Email = "test@gmail.com", PhoneNumber = "3391234567" }
-                };
+                    {
+                        new User() { Id = 1, Name = "Max", Email = "test@gmail.com", PhoneNumber = "3391234567" },
+                        new User() { Id = 2, Name = "Luca", Email = "test2@gmail.com", PhoneNumber = "3331234567" }
+                    };
 
                     ctx.Users.AddRange(users);
 
@@ -33,10 +34,10 @@ namespace OrderManagerApi
 
 
                     var addresses = new List<Address>()
-                {
-                    new Address { Id = 1, UserId = 1, Street = "Via degli orti", StreetNumber = "11", City = "Mandello del Lario", ZipCode = "23826" },
-                    new Address { Id = 2, UserId = 1, Street = "Via delle erbe", StreetNumber = "13", City = "Mandello del Lario", ZipCode = "23826" }
-                };
+                    {
+                        new Address { Id = 1, UserId = 1, Street = "Via degli orti", StreetNumber = "11", City = "Mandello del Lario", ZipCode = "23826" },
+                        new Address { Id = 2, UserId = 1, Street = "Via delle erbe", StreetNumber = "13", City = "Mandello del Lario", ZipCode = "23826" }
+                    };
 
                     ctx.Addresses.AddRange(addresses);
 
@@ -46,10 +47,10 @@ namespace OrderManagerApi
 
 
                     var categories = new List<Category>()
-                {
-                    new Category() { Id = 1, Name = "Attrezzi" },
-                    new Category() { Id = 2, Name = "Abbigliamento" },
-                };
+                    {
+                        new Category() { Id = 1, Name = "Attrezzi" },
+                        new Category() { Id = 2, Name = "Abbigliamento" },
+                    };
 
                     ctx.Categories.AddRange(categories);
 
@@ -72,8 +73,8 @@ namespace OrderManagerApi
 
                     var orders = new List<Order>()
                 {
-                    new Order() { Id = 1, UserId = 1, OrderDate = DateTime.Now },
-                    new Order() { Id = 2, UserId = 2, OrderDate = DateTime.Now }
+                    new Order() { Id = 1, UserId = 1, OrderDate = DateTime.UtcNow },
+                    new Order() { Id = 2, UserId = 2, OrderDate = DateTime.UtcNow }
                 };
 
                     ctx.Orders.AddRange(orders);

@@ -20,11 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AddressService\AddressService.csproj" />
     <ProjectReference Include="..\GenericService\GenericService.csproj" />
     <ProjectReference Include="..\OrderService\OrderService.csproj" />
     <ProjectReference Include="..\ProductService\ProductService.csproj" />
-    <ProjectReference Include="..\UserService\UserService.csproj" />
   </ItemGroup>
 
 </Project>

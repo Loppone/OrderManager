@@ -60,9 +60,12 @@ namespace OrderManagerApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, DtoProduct entity)
         {
-            var data = await _productService.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
 
-            if (data == null) return NotFound();
+            if (product == null) return NotFound();
+
+            var data = _mapper.Map<BusinessProduct>(entity);
+            data.Id = product.Id;
 
             await _genericService.UpdateAsync(data);
 
